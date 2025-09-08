@@ -1,23 +1,44 @@
+import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 
 export default function App() {
+	const [resultado, setResultado] = useState('')
+
+	function jogar(escolha) {
+		const opcoes = ['pedra', 'papel', 'tesoura']
+		const numeroAleatorio = Math.floor(Math.random() * opcoes.length)
+		const escolhaComputador = opcoes[numeroAleatorio]
+
+		if (escolha === escolhaComputador) {
+			setResultado(`${escolhaComputador} - Empate!`)
+		} else if (
+			(escolha === 'pedra' && escolhaComputador === 'tesoura') ||
+			(escolha === 'papel' && escolhaComputador === 'pedra') ||
+			(escolha === 'tesoura' && escolhaComputador === 'papel')
+		) {
+			setResultado(`${escolhaComputador} - Você ganhou!`)
+		} else {
+			setResultado(`${escolhaComputador} - Você perdeu!`)
+		}
+	}
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>JOKENPO</Text>
 			<View style={styles.containerButtons}>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => jogar('pedra')}>
 					<Image style={styles.imageButtons} source={require('./assets/pedra.png')} />
 				</TouchableOpacity>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => jogar('papel')}>
 					<Image style={styles.imageButtons} source={require('./assets/papel.png')} />
 				</TouchableOpacity>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => jogar('tesoura')}>
 					<Image style={styles.imageButtons} source={require('./assets/tesoura.png')} />
 				</TouchableOpacity>
 			</View>
 			<Text style={styles.texto}>Escolha sua jogada</Text>
-			<Text style={styles.resultado}>Resultado da jogada</Text>
+			<Text style={styles.resultado}>{resultado}</Text>
 			<StatusBar style='auto' />
 		</View>
 	)
