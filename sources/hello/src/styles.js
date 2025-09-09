@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		borderRadius: 8,
 		backgroundColor: '#fff',
+		textTransform: 'uppercase',
 	},
 	image: {
 		height: 120,
