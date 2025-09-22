@@ -1,65 +1,45 @@
 import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { Text, View, TextInput, Button } from 'react-native'
-
-import styles from './styles'
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import axios from 'axios'
 
 export default function App() {
-	const [usuario, setUsuario] = useState('')
-	const [senha, setSenha] = useState('')
+	const [login, setLogin] = useState('valor')
+	const [senha, setSenha] = useState('valor')
 	const [resultado, setResultado] = useState('')
 
-	useEffect(() => {
-		if (usuario === '' && senha === '') {
-			setResultado('')
-		}
-	}, [usuario, senha])
+	useEffect(() => {}, [])
 
-	const _handleLogin = () => {
-		if (usuario === 'admin' && senha === 'senha') {
-			setResultado('Login bem sucedido!')
+	function _handleLogin() {
+		if (login === 'admin' && senha === 'senha') {
+			setResultado('Login bem-sucedido')
 		} else {
-			setResultado('Falha no login. Usuário ou senha incorretos.')
+			setResultado('Login falhou')
 		}
-	}
-	const _handleReset = () => {
-		setUsuario('')
-		setSenha('')
 	}
 
 	return (
 		<View style={styles.container}>
 			<Text>Informe seu login</Text>
-			<TextInput
-				autoCapitalize='none'
-				autocorrect={false}
-				autocomplete='off'
-				keyboardType='email-address'
-				value={usuario}
-				onChangeText={setUsuario}
-				style={styles.textinput}
-				placeholder='informe os dados aqui'
-			/>
-			<Text>Informe sua senha</Text>
-			<TextInput
-				autoCapitalize='none'
-				autocorrect={false}
-				autocomplete='off'
-				secureTextEntry
-				keyboardType='number-pad'
-				value={senha}
-				onChangeText={setSenha}
-				style={styles.textinput}
-				placeholder='informe os dados aqui'
-			/>
-			<View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center' }}>
-				<Button title='Enviar' onPress={_handleLogin} />
-				<Button title='Resetar' onPress={_handleReset} />
-			</View>
-			<View style={styles.containerResultado}>
-				<Text>{resultado}</Text>
-			</View>
+			<TextInput onChangeText={setLogin} style={styles.textinput} placeholder='Login' />
+			<TextInput onChangeText={setSenha} style={styles.textinput} placeholder='Senha' secureTextEntry />
+			<Button title='Enviar' onPress={_handleLogin} />
+			<Text>{resultado}</Text>
 			<StatusBar style='auto' />
 		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		justifyContent: 'center',
+		padding: 16,
+		gap: 16,
+	},
+	textinput: {
+		borderWidth: 1,
+		borderColor: '#000',
+	},
+})
