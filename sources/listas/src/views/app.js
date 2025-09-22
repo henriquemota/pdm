@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
 import produtos from '../data/produtos'
 
 export default function App() {
@@ -8,24 +8,34 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			<Text>5 Produtos em destaque</Text>
-			<ScrollView horizontal style={{ maxHeight: 160 }}>
+			<Text>Produtos em destaque</Text>
+			<ScrollView horizontal style={styles.scrollHorizontal}>
 				{produtos.slice(0, 10).map((produto, ix) => (
-					<Text style={{ padding: 10 }} key={ix}>
-						{produto.nome}
-					</Text>
+					<TouchableOpacity key={ix} style={styles.button}>
+						<Text style={{ padding: 10 }}>{produto.nome}</Text>
+					</TouchableOpacity>
 				))}
 			</ScrollView>
-			<Text>Todos os produtos</Text>
+			<Text>Todos os produtos Flatlist</Text>
+			<FlatList data={produtos} renderItem={({ item }) => <Item produto={item} />} keyExtractor={(item) => item.id} />
+			{/* 
+			<Text>Todos os produtos ScrollView</Text>
 			<ScrollView>
 				{produtos.map((produto, ix) => (
-					<Text key={ix}>
-						{produto.id} - {produto.nome} : R$ {produto.valor.toFixed(2)}
-					</Text>
+					<Item key={produto.id} produto={produto} />
 				))}
-			</ScrollView>
+			</ScrollView> 
+			*/}
 			<StatusBar style='auto' />
 		</View>
+	)
+}
+
+const Item = ({ produto }) => {
+	return (
+		<Text>
+			{produto.id} - {produto.nome} : R$ {produto.valor.toFixed(2)}
+		</Text>
 	)
 }
 
@@ -36,5 +46,17 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		padding: 16,
 		gap: 16,
+	},
+	scrollHorizontal: {
+		padding: 8,
+		height: 140,
+	},
+	button: {
+		backgroundColor: '#DDD',
+		margin: 4,
+		borderRadius: 8,
+		height: 80,
+		width: 80,
+		justifyContent: 'center',
 	},
 })
