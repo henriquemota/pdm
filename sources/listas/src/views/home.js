@@ -1,48 +1,54 @@
-import { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
-import produtos from '../data/produtos'
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
-export default function Home() {
-	const navigation = useNavigation()
+// importando os dados
+import produtos from '../data/produtos'
 
-	useEffect(() => {}, [])
+export default function Home() {
+	const { navigate } = useNavigation()
 
 	return (
 		<View style={styles.container}>
-			<Text>Produtos em destaque</Text>
-			<ScrollView horizontal style={styles.scrollHorizontal}>
-				{produtos.slice(0, 10).map((produto, ix) => (
+			<ScrollView horizontal style={{ height: 80, marginTop: 16 }}>
+				{produtos.slice(0, 10).map((e, i) => (
 					<TouchableOpacity
-						key={ix}
-						style={styles.button}
-						onPress={() => navigation.navigate('Product', { ...produto })}
+						key={i}
+						style={{ marginRight: 16, alignItems: 'center' }}
+						onPress={() => navigate('Produto', { ...e })}
 					>
-						<Text style={{ padding: 10 }}>{produto.nome}</Text>
+						<Text>{e.nome}</Text>
+						<Text>{e.valor.toFixed(2)}</Text>
 					</TouchableOpacity>
 				))}
 			</ScrollView>
-			<Text>Todos os produtos Flatlist</Text>
-			<FlatList data={produtos} renderItem={({ item }) => <Item produto={item} />} keyExtractor={(item) => item.id} />
-			{/* 
-			<Text>Todos os produtos ScrollView</Text>
+			<FlatList
+				data={produtos}
+				renderItem={({ item }) => <Item produto={item} />}
+				keyExtractor={(item, i) => i.toString()}
+			/>
+			{/* 			
 			<ScrollView>
-				{produtos.map((produto, ix) => (
-					<Item key={produto.id} produto={produto} />
+				{produtos.map((e, i) => (
+					<Item produto={e} key={i.toString()} />
 				))}
 			</ScrollView> 
 			*/}
+
 			<StatusBar style='auto' />
 		</View>
 	)
 }
 
 const Item = ({ produto }) => {
+	const { navigate } = useNavigation()
+
 	return (
-		<Text>
-			{produto.id} - {produto.nome} : R$ {produto.valor.toFixed(2)}
-		</Text>
+		<TouchableOpacity style={{ marginBottom: 8 }} onPress={() => navigate('Produto', { ...produto })}>
+			<Text>
+				{produto.nome} - {produto.valor.toFixed(2)}
+			</Text>
+		</TouchableOpacity>
 	)
 }
 
@@ -53,17 +59,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		padding: 16,
 		gap: 16,
-	},
-	scrollHorizontal: {
-		padding: 8,
-		height: 140,
-	},
-	button: {
-		backgroundColor: '#DDD',
-		margin: 4,
-		borderRadius: 8,
-		height: 80,
-		width: 80,
-		justifyContent: 'center',
 	},
 })

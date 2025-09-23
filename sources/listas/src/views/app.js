@@ -1,19 +1,19 @@
 import { createStaticNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-// importa as visoes
+//importar as interfaces
 import HomeScreen from './home'
-import ProductScreen from './product'
+import ProdutoScreen from './produto'
 
 const RootStack = createNativeStackNavigator({
 	screens: {
 		Home: {
 			screen: HomeScreen,
-			options: { title: 'Tela inicial' },
+			options: { title: 'Home alterando o titulo' },
 		},
-		Product: {
-			screen: ProductScreen,
-			options: { title: 'Tela do Produto' },
+		Produto: {
+			screen: ProdutoScreen,
+			options: { title: 'Produto' },
 		},
 	},
 })
