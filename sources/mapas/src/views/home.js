@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, View } from 'react-native'
-import { TextInput } from 'react-native-paper'
+import { Searchbar } from 'react-native-paper'
 import MapView, { Marker } from 'react-native-maps'
 import axios from 'axios'
 
-// importando os dados
 export default function Home() {
 	const URL = 'https://cep.awesomeapi.com.br/json/'
-	const [cep, setCep] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [cep, setCep] = useState('')
+	const [dados, setDados] = useState()
 	const [coordenada, setCoordenada] = useState({})
+
+	console.log(dados)
+
+	// região inicial do mapa
 	const initialRegion = {
 		latitude: -3.7617664,
 		longitude: -38.4958464,
@@ -18,30 +22,34 @@ export default function Home() {
 		longitudeDelta: 0.0421,
 	}
 
+	// trabalhando com hook de efeito
 	useEffect(() => {
 		if (cep.length === 8) {
+			setLoading(true)
 			axios
-				.get(URL + cep)
+				.get(`${URL}${cep}`)
 				.then(({ data }) => {
-					// setDados(data)
-					// console.log(data)
-					const { lat, lng } = data
+					// promise resolvida
+					setDados(data)
 					setCoordenada({
-						latitude: Number(lat),
-						longitude: Number(lng),
+						...coordenada,
+						latitude: Number(data.lat),
+						longitude: Number(data.lng),
 					})
 				})
-				.catch((e) => {
-					// setDados(undefined)
-					setCoordenada({})
+				.catch((error) => {
+					setDados(undefined)
+					console.error(error)
 				})
-			// .finally(() => console.log('Sempre por aqui'))
+				.finally(() => {
+					setLoading(false)
+				})
 		}
 	}, [cep])
 
 	return (
 		<View style={styles.container}>
-			<TextInput onChangeText={setCep} />
+			<Searchbar loading={loading} placeholder='Digite o CEP' maxLength={8} onChangeText={setCep} />
 			<MapView
 				style={{ flex: 1 }}
 				initialRegion={initialRegion}
@@ -57,7 +65,7 @@ export default function Home() {
 			>
 				{'latitude' in coordenada && (
 					<Marker
-						title='poderia ser qualquer coisa'
+						title={`Nome da Rua: ${dados.address_name}`}
 						coordinate={{ latitude: coordenada.latitude, longitude: coordenada.longitude }}
 					/>
 				)}
