@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 //importar as interfaces
 import HomeScreen from './home'
 import EnderecosScreen from './enderecos'
+import AuthScreen from './auth'
 
 const RootStack = createNativeStackNavigator({
 	screens: {
@@ -14,6 +15,10 @@ const RootStack = createNativeStackNavigator({
 		Enderecos: {
 			screen: EnderecosScreen,
 			options: { title: 'Endereços' },
+		},
+		Auth: {
+			screen: AuthScreen,
+			options: { title: 'Autenticação' },
 		},
 	},
 })

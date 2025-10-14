@@ -65,6 +65,9 @@ export default function Home() {
 				<Button mode='outlined' onPress={() => navigate('Enderecos')}>
 					Próxima
 				</Button>
+				<Button mode='outlined' onPress={() => navigate('Auth')}>
+					Auth
+				</Button>
 			</View>
 			<MapView
 				style={{ flex: 1 }}
