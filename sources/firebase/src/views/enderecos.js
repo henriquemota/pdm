@@ -4,6 +4,7 @@ import { TextInput, Text } from 'react-native-paper'
 import axios from 'axios'
 import { db } from '../services/_firebase'
 import { ref, set, get, child } from 'firebase/database'
+import useEndereco from '../hooks/endereco'
 
 const Enderecos = () => {
 	const baseUrl = 'https://dispositivosmoveis2025-default-rtdb.firebaseio.com/enderecos.json'
@@ -15,6 +16,8 @@ const Enderecos = () => {
 	const [bairro, setBairro] = useState('')
 	const [cidade, setCidade] = useState('')
 	const [estado, setEstado] = useState('')
+
+	const { list: listEndereco } = useEndereco()
 
 	const _handleSave = () => {
 		setLoading(true)
@@ -30,7 +33,6 @@ const Enderecos = () => {
 			})
 			.catch((error) => {
 				Alert.alert('Erro', 'Erro ao cadastrar o endereço!')
-				console.log(error)
 			})
 			.finally(() => setLoading(false))
 	}
@@ -62,15 +64,9 @@ const Enderecos = () => {
 	}
 
 	const _readData = () => {
-		const dbRef = ref(db)
-		get(child(dbRef, 'enderecos/'))
-			.then((snapshot) => {
-				if (snapshot.exists()) {
-					const val = snapshot.val()
-					setData(Object.entries(val).map(([id, item]) => ({ id, ...item })))
-				} else {
-					setData([])
-				}
+		listEndereco()
+			.then((data) => {
+				setData(data)
 			})
 			.catch((error) => {
 				console.error(error)

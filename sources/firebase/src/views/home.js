@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, Dimensions, Button } from 'react-native'
-import { Searchbar } from 'react-native-paper'
+import { StyleSheet, View, Dimensions } from 'react-native'
+import { Searchbar, Button } from 'react-native-paper'
 import MapView, { Marker } from 'react-native-maps'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
@@ -56,13 +56,15 @@ export default function Home() {
 		<View style={styles.container}>
 			<View style={{ flexDirection: 'row' }}>
 				<Searchbar
-					style={{ width: width - 100 }}
+					style={{ flex: 1 }}
 					loading={loading}
 					placeholder='Digite o CEP'
 					maxLength={8}
 					onChangeText={setCep}
 				/>
-				<Button onPress={() => navigate('Enderecos')} style={{ width: 100 }} title='Listar endereços' />
+				<Button mode='outlined' onPress={() => navigate('Enderecos')}>
+					Próxima
+				</Button>
 			</View>
 			<MapView
 				style={{ flex: 1 }}
