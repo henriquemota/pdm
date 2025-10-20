@@ -14,10 +14,11 @@ export default function Home() {
 	// Declara a navegacao
 	const { navigate } = useNavigation()
 
-	const initDB = async () => {
+	const initDB = () => {
+		let db = undefined
 		try {
-			const db = await SQLite.openDatabaseAsync('mydb.db')
-			await db.execAsync(`
+			db = SQLite.openDatabaseSync('mydb.db')
+			db.execAsync(`
         CREATE TABLE IF NOT EXISTS contatos (
           id INTEGER PRIMARY KEY NOT NULL, 
           nome TEXT NOT NULL,
@@ -27,28 +28,30 @@ export default function Home() {
 			console.log('banco de dados criado com sucesso')
 		} catch (error) {
 			console.log('erro ao criar banco de dados')
+		} finally {
+			if (db) db.closeSync()
 		}
 	}
 	// insere os dados no banco de dados
-	const insertData = async () => {
+	const insertData = () => {
 		let db = undefined
 		try {
-			db = await SQLite.openDatabaseAsync('mydb.db')
-			await db.runAsync('INSERT INTO contatos (nome, telefone) VALUES (?,?)', [data.nome, data.telefone])
+			db = SQLite.openDatabaseSync('mydb.db')
+			db.runSync('INSERT INTO contatos (nome, telefone) VALUES (?,?)', [data.nome, data.telefone])
 			setData({ nome: '', telefone: '' })
 			Alert.alert('Atenção', 'Dados inseridos com sucesso.')
 		} catch (error) {
 			console.log(error)
 		} finally {
-			if (db) db.closeAsync()
+			if (db) db.closeSync()
 		}
 	}
 	// lê os dados do banco de dados
-	const readData = async () => {
+	const readData = () => {
 		let db = undefined
 		try {
-			db = await SQLite.openDatabaseAsync('mydb.db')
-			const allRows = await db.getAllAsync('SELECT * FROM contatos;')
+			db = SQLite.openDatabaseSync('mydb.db')
+			const allRows = db.getAllSync('SELECT * FROM contatos;')
 			setContatos(allRows)
 			// for (const row of allRows) {
 			// 	console.log(row.id, row.nome, row.telefone)
@@ -57,7 +60,7 @@ export default function Home() {
 			setContatos([])
 			console.log(error)
 		} finally {
-			if (db) db.closeAsync()
+			if (db) db.closeSync()
 		}
 	}
 	// remove os dados no banco de dados
