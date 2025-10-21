@@ -1,98 +1,53 @@
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, Dimensions, Alert } from 'react-native'
-import { Button, TextInput } from 'react-native-paper'
+import { StyleSheet, View, Dimensions, Alert, FlatList } from 'react-native'
+import { Button, TextInput, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
-
-// importar a biblioteca do SQLite
-import * as SQLite from 'expo-sqlite'
+import useAgenda from '../hooks/agenda'
 
 export default function Home() {
 	const [data, setData] = useState({ nome: '', telefone: '' })
-	// Dimenssões da tela
+	const [contatos, setContatos] = useState([])
 	const { width } = Dimensions.get('window')
-	// Declara a navegacao
 	const { navigate } = useNavigation()
-
-	const initDB = () => {
-		let db = undefined
-		try {
-			db = SQLite.openDatabaseSync('mydb.db')
-			db.execAsync(`
-        CREATE TABLE IF NOT EXISTS contatos (
-          id INTEGER PRIMARY KEY NOT NULL, 
-          nome TEXT NOT NULL,
-          telefone TEXT NOT NULL
-        );
-			`)
-			console.log('banco de dados criado com sucesso')
-		} catch (error) {
-			console.log('erro ao criar banco de dados')
-		} finally {
-			if (db) db.closeSync()
-		}
-	}
-	// insere os dados no banco de dados
-	const insertData = () => {
-		let db = undefined
-		try {
-			db = SQLite.openDatabaseSync('mydb.db')
-			db.runSync('INSERT INTO contatos (nome, telefone) VALUES (?,?)', [data.nome, data.telefone])
-			setData({ nome: '', telefone: '' })
-			Alert.alert('Atenção', 'Dados inseridos com sucesso.')
-		} catch (error) {
-			console.log(error)
-		} finally {
-			if (db) db.closeSync()
-		}
-	}
-	// lê os dados do banco de dados
-	const readData = () => {
-		let db = undefined
-		try {
-			db = SQLite.openDatabaseSync('mydb.db')
-			const allRows = db.getAllSync('SELECT * FROM contatos;')
-			setContatos(allRows)
-			// for (const row of allRows) {
-			// 	console.log(row.id, row.nome, row.telefone)
-			// }
-		} catch (error) {
-			setContatos([])
-			console.log(error)
-		} finally {
-			if (db) db.closeSync()
-		}
-	}
-	// remove os dados no banco de dados
-	const deleteData = async (id) => {
-		let db = undefined
-		try {
-			db = await SQLite.openDatabaseAsync('mydb.db')
-			await db.runAsync('DELETE FROM contatos WHERE id = ?', [id])
-			// Alert.alert('Atenção', 'Dados inseridos com sucesso.')
-		} catch (error) {
-			console.log(error)
-		} finally {
-			if (db) db.closeAsync()
-		}
-	}
+	const { initDB, insert, read } = useAgenda()
 
 	useEffect(() => {
 		initDB()
+		setContatos(read())
 	}, [])
 
 	return (
 		<View style={styles.container}>
-			<View>
-				<TextInput value={data.nome} onChangeText={(text) => setData({ ...data, nome: text })} />
-				<TextInput value={data.telefone} onChangeText={(text) => setData({ ...data, telefone: text })} />
-				<Button mode='outlined' onPress={insertData}>
+			<TextInput value={data.nome} onChangeText={(text) => setData({ ...data, nome: text })} />
+			<TextInput value={data.telefone} onChangeText={(text) => setData({ ...data, telefone: text })} />
+			<View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center' }}>
+				<Button
+					mode='outlined'
+					onPress={() => {
+						insert(data)
+						setData({ nome: '', telefone: '' })
+						setContatos(read())
+					}}
+				>
 					Inserir
 				</Button>
 				<Button mode='outlined' onPress={() => console.log('listar')}>
 					Listar
 				</Button>
 			</View>
+
+			<FlatList
+				data={contatos}
+				renderItem={({ item }) => (
+					<View>
+						<Text>
+							{item.nome} - {item.telefone}
+						</Text>
+					</View>
+				)}
+				keyExtractor={(item) => item.id}
+			/>
 
 			<StatusBar style='auto' />
 		</View>
@@ -102,6 +57,7 @@ export default function Home() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		gap: 16,
 		backgroundColor: '#fff',
 		padding: 8,
 	},
