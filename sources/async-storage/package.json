@@ -13,6 +13,8 @@
 		"@react-navigation/native": "^7.1.18",
 		"@react-navigation/native-stack": "^7.5.1",
 		"expo": "53.0.23",
+		"expo-document-picker": "~13.1.6",
+		"expo-file-system": "~18.1.11",
 		"expo-status-bar": "2.2.3",
 		"react": "19.0.0",
 		"react-native": "0.79.5",
