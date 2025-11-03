@@ -4,7 +4,6 @@ import { View, FlatList } from 'react-native'
 import { Text, Button, TextInput } from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as FileSystem from 'expo-file-system'
-import * as DocumentPicker from 'expo-document-picker'
 
 export default function App() {
 	const [files, setFiles] = useState([])
@@ -77,6 +76,15 @@ export default function App() {
 		}
 	}
 
+	const _removerArquivo = async (filename) => {
+		try {
+			await FileSystem.deleteAsync(FileSystem.documentDirectory + filename)
+			await _lerDiretorios()
+		} catch (error) {
+			console.error('Erro ao remover arquivo:', error)
+		}
+	}
+
 	return (
 		<View style={{ gap: 8, padding: 8, flex: 1 }}>
 			<TextInput
@@ -122,7 +130,7 @@ export default function App() {
 				data={files}
 				keyExtractor={(item, index) => index.toString()}
 				renderItem={({ item }) => (
-					<Button mode='outlined' style={{ padding: 2, margin: 2 }}>
+					<Button onPress={() => _removerArquivo(item)} mode='outlined' style={{ padding: 2, margin: 2 }}>
 						{item}
 					</Button>
 				)}
