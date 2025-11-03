@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { Text, View } from 'react-native'
+import { Text, View, FlatList } from 'react-native'
 import { TextInput, Button } from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as FileSystem from 'expo-file-system'
@@ -8,10 +8,11 @@ import * as DocumentPicker from 'expo-document-picker'
 
 const Home = () => {
 	const { setItem, getItem } = AsyncStorage
+	const [arquivos, setArquivos] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [data, setData] = useState({ message: '', secret: '' })
 
-	const fileUri = FileSystem.documentDirectory + 'meuArquivo.txt'
+	const fileUri = FileSystem.documentDirectory + 'meuArquivo2.txt'
 
 	const _gravar = async () => {
 		setLoading(true)
@@ -54,9 +55,20 @@ const Home = () => {
 		}
 	}
 
+	const _lerArquivos = async () => {
+		try {
+			const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
+			setArquivos(files)
+		} catch (error) {
+			setArquivos([])
+			console.error('Erro ao ler arquivos:', error)
+		}
+	}
+
 	const _criarArquivo = async () => {
 		try {
 			await FileSystem.writeAsStringAsync(fileUri, 'Olá, mundo! Este é um teste.')
+			await _lerArquivos()
 			console.log('Arquivo criado com sucesso')
 		} catch (error) {
 			console.error('Erro ao criar arquivo:', error)
@@ -65,6 +77,7 @@ const Home = () => {
 
 	useEffect(() => {
 		_ler()
+		_lerArquivos()
 	}, [])
 
 	return (
@@ -89,6 +102,15 @@ const Home = () => {
 			</Button>
 			<StatusBar style='auto' />
 			<Text>{data.message}</Text>
+			<FlatList
+				data={arquivos.filter((m) => m.endsWith('.txt'))}
+				keyExtractor={(item, i) => i.toString()}
+				renderItem={({ item }) => (
+					<View style={{ marginVertical: 4 }}>
+						<Button mode='outlined'>{item}</Button>
+					</View>
+				)}
+			/>
 		</View>
 	)
 }
