@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, Alert } from 'react-native'
 import { Text, Button, TextInput } from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as FileSystem from 'expo-file-system'
+import * as SecureStore from 'expo-secure-store'
 
 export default function App() {
 	const [files, setFiles] = useState([])
@@ -16,6 +17,26 @@ export default function App() {
 	useEffect(() => {
 		_lerDiretorios()
 	}, [])
+
+	async function _saveSecureStore() {
+		setLoading(true)
+		try {
+			await SecureStore.setItemAsync(data.chave, data.palavra)
+		} catch (error) {
+			console.error('Erro ao salvar no SecureStore:', error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	async function _getValueFor() {
+		let result = await SecureStore.getItemAsync(data.chave)
+		if (result) {
+			Alert.alert("🔐 Here's your value 🔐 \n" + result)
+		} else {
+			Alert.alert('No values stored under that key.')
+		}
+	}
 
 	const _gravar = async () => {
 		try {
@@ -105,6 +126,12 @@ export default function App() {
 				label='Palavra secreta'
 				mode='outlined'
 			/>
+			<Button mode='contained' onPress={_saveSecureStore} loading={loading}>
+				Secure Store Save
+			</Button>
+			<Button mode='contained' onPress={_getValueFor} loading={loading}>
+				Secure Store Restore
+			</Button>
 			<Button mode='contained' onPress={_gravar} loading={loading}>
 				Enviar
 			</Button>
