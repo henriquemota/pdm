@@ -1,0 +1,38 @@
+{
+	"expo": {
+		"name": "FINALAPP",
+		"slug": "finalapp",
+		"version": "1.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"newArchEnabled": true,
+		"scheme": "finalapp",
+		"extra": {
+			"API_URL": "https://finalapp",
+			"router": {}
+		},
+		"splash": {
+			"image": "./assets/icon.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#2E7D32"
+		},
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "finalapp"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/icon.png",
+				"backgroundColor": "#000000"
+			},
+			"edgeToEdgeEnabled": true,
+			"package": "finalapp"
+		},
+		"web": {
+			"favicon": "./assets/favicon.png",
+			"bundler": "metro"
+		},
+		"plugins": ["expo-router"]
+	}
+}
